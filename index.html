@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Drive Image Link Generator</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        --bg-color: #202124;
+        --surface-color: #303134;
+        --text-color: #e8eaed;
+        --secondary-text-color: #969ba1;
+        --primary-color: #8ab4f8;
+        --error-color: #f28b82;
+        --button-color: #303134;
+        --button-hover-color: #3c4043;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        font-family: arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+      }
+
+      .header {
+        padding: 6px;
+        height: 60px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .header a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 13px;
+        padding: 5px;
+      }
+
+      .header a:hover {
+        text-decoration: underline;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        padding-top: 50px;
+      }
+
+      .logo-grp {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        padding: 0;
+
+        p {
+          padding: 0 2rem;
+          margin: 0;
+          text-align: center;
+          line-height: 1.5rem;
+        }
+      }
+
+      .logo {
+        padding: 0;
+        margin: 0;
+        font-size: 50px;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          to right,
+          #8ad8ff,
+          #6bd477,
+          #f6fba3,
+          #ffbc42
+        );
+        -webkit-background-clip: text;
+        color: transparent;
+        font-weight: bold;
+      }
+
+      .search-container {
+        width: 100%;
+        max-width: 584px;
+        padding: 20px;
+      }
+
+      .search-box {
+        width: 100%;
+        height: 44px;
+        border: 1px solid var(--surface-color);
+        border-radius: 24px;
+        padding: 0 20px;
+        font-size: 16px;
+        outline: none;
+        background: var(--surface-color);
+        color: var(--text-color);
+      }
+
+      .search-box:hover,
+      .search-box:focus {
+        background-color: var(--button-hover-color);
+        border-color: var(--primary-color);
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .button {
+        background-color: var(--button-color);
+        border: 1px solid var(--button-color);
+        border-radius: 4px;
+        color: var(--text-color);
+        font-size: 14px;
+        padding: 0 16px;
+        height: 36px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .button:hover {
+        background-color: var(--button-hover-color);
+        border-color: var(--primary-color);
+      }
+
+      #result {
+        margin-top: 20px;
+        text-align: center;
+        word-break: break-all;
+        padding: 15px;
+        background-color: var(--surface-color);
+        border-radius: 8px;
+        display: none;
+      }
+
+      #result a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      #result a:hover {
+        text-decoration: underline;
+      }
+
+      #demo-image {
+        max-width: 100%;
+        max-height: 300px;
+        margin-top: 20px;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .error {
+        color: var(--error-color);
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .footer {
+        background: var(--surface-color);
+        padding: 10px 20px;
+        margin-top: auto;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        font-size: 14px;
+      }
+
+      .footer a {
+        color: var(--secondary-text-color);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 600px) {
+        .search-container {
+          padding: 20px 10px;
+        }
+        .logo {
+          font-size: 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <a href="#">About</a>
+      <a href="#">Help</a>
+    </header>
+
+    <main class="main">
+      <div class="logo-grp">
+        <div class="logo">Direct Drive</div>
+        <p>
+          Generate a direct link for your Google Drive content, perfect for
+          embedding in websites or markdown.
+        </p>
+      </div>
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-box"
+          id="drive-link"
+          placeholder="Paste your Google Drive image link here"
+        />
+
+        <div class="buttons">
+          <button class="button" onclick="generateEmbedLink()">
+            Generate Link
+          </button>
+          <button class="button" onclick="clearInput()">Clear</button>
+        </div>
+
+        <div id="result"></div>
+        <img id="demo-image" alt="Preview of the generated image" />
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <a href="https://github.com/mik1337" target="_blank">@mik1337</a>
+        <a href="https://mik.sh" target="_blank">mik.sh</a>
+      </div>
+    </footer>
+
+    <script>
+      function clearInput() {
+        document.getElementById("drive-link").value = "";
+        document.getElementById("result").style.display = "none";
+        document.getElementById("demo-image").style.display = "none";
+      }
+
+      function generateEmbedLink() {
+        const driveLink = document.getElementById("drive-link").value;
+        const resultDiv = document.getElementById("result");
+        const demoImage = document.getElementById("demo-image");
+
+        if (!driveLink) {
+          resultDiv.innerHTML =
+            '<div class="error">Please enter a Google Drive link.</div>';
+          resultDiv.style.display = "block";
+          return;
+        }
+
+        let fileId;
+        try {
+          const url = new URL(driveLink);
+          if (url.hostname === "drive.google.com") {
+            if (url.pathname.includes("/file/d/")) {
+              fileId = url.pathname.split("/file/d/")[1].split("/")[0];
+            } else if (url.pathname.includes("/open")) {
+              fileId = url.searchParams.get("id");
+            }
+          }
+        } catch (error) {
+          resultDiv.innerHTML =
+            '<div class="error">Invalid URL. Please enter a valid Google Drive link.</div>';
+          resultDiv.style.display = "block";
+          return;
+        }
+
+        if (!fileId) {
+          resultDiv.innerHTML =
+            '<div class="error">Could not extract file ID from the provided link.</div>';
+          resultDiv.style.display = "block";
+          return;
+        }
+
+        const embedLink = `https://lh3.googleusercontent.com/d/${fileId}`;
+        resultDiv.innerHTML = `<a href="${embedLink}" target="_blank">${embedLink}</a>`;
+        resultDiv.style.display = "block";
+
+        demoImage.src = embedLink;
+        demoImage.style.display = "block";
+
+        demoImage.onerror = function () {
+          resultDiv.innerHTML +=
+            '<div class="error">Error loading image. Please check if the file is accessible and is an image.</div>';
+          demoImage.style.display = "none";
+        };
+      }
+    </script>
+  </body>
+</html>
